@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Surprise for Meri Jan</title>
+  <meta name="description" content="A romantic, interactive birthday surprise website featuring cute animated pandas, chocolate cake, emotional wishes, and special messages." />
+  <meta property="og:title" content="Birthday Surprise for Meri Jan" />
+  <meta property="og:description" content="A romantic, interactive birthday surprise website featuring cute animated pandas, chocolate cake, emotional wishes, and special messages." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Google Fonts with local fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@600;700&family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Variables & Theme Palette */
+    :root {
+      --baby-pink: #F8D7DA;
+      --baby-pink-light: #FFF0F2;
+      --soft-white: #FFFDFB;
+      --muted-dark-pink: #C65B78;
+      --muted-dark-pink-hover: #b04965;
+      --rose-pink: #D9879B;
+      --soft-brown: #80615C;
+      --cream: #FFF5EF;
+      --muted-green: #8BAF91;
+      --muted-green-hover: #799d7f;
+      --shadow-soft: 0 10px 30px -5px rgba(198, 91, 120, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+      --shadow-hover: 0 14px 34px -4px rgba(198, 91, 120, 0.28), 0 6px 16px rgba(0, 0, 0, 0.06);
+      --font-anton: 'Anton', Impact, 'Arial Black', sans-serif;
+      --font-cursive: 'Dancing Script', 'Caveat', 'Brush Script MT', cursive;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--baby-pink);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.6) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(217, 135, 155, 0.25) 0%, transparent 45%),
+        linear-gradient(135deg, #fce8ea 0%, #f8d7da 50%, #fdebee 100%);
+      font-family: var(--font-body);
+      color: var(--soft-brown);
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Ambient Background Floating Particles */
+    #ambient-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Main Container */
+    #app-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 760px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+    }
+
+    /* Scene Transitions */
+    .scene {
+      display: none;
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.96) translateY(8px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scene.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Top Sound & Audio Pill */
+    .sound-toggle-btn {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 50;
+      background: rgba(255, 253, 251, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(217, 135, 155, 0.35);
+      color: var(--muted-dark-pink);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(198, 91, 120, 0.12);
+      transition: all 0.25s ease;
+    }
+    .sound-toggle-btn:hover {
+      background: var(--soft-white);
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(198, 91, 120, 0.22);
+    }
+    .sound-toggle-btn.playing {
+      background: var(--muted-dark-pink);
+      color: white;
+      border-color: var(--muted-dark-pink);
+    }
+
+    /* Uniform Anton NEXT Buttons */
+    .btn-next {
+      background-color: var(--muted-dark-pink);
+      color: #FFFFFF;
+      font-family: var(--font-anton);
+      font-size: 20px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 13px 44px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(198, 91, 120, 0.35);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .btn-next:hover {
+      background-color: var(--muted-dark-pink-hover);
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 22px rgba(198, 91, 120, 0.45);
+    }
+
+    .btn-next:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: 0 3px 10px rgba(198, 91, 120, 0.3);
+    }
+
+    /* CLICK ME Button for Scene 1 */
+    .btn-click-me {
+      background: linear-gradient(135deg, var(--muted-dark-pink) 0%, var(--rose-pink) 100%);
+      color: #FFFFFF;
+      font-family: var(--font-anton);
+      font-size: 22px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 16px 52px;
+      border: none;
+      border-radius: 36px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(198, 91, 120, 0.38);
+      transition: all 0.25s ease;
+      animation: gentle-pulse 2.2s infinite ease-in-out;
+      margin-top: 28px;
+    }
+    .btn-click-me:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 28px rgba(198, 91, 120, 0.5);
+    }
+
+    @keyframes gentle-pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 24px rgba(198, 91, 120, 0.38);
+      }
+      50% {
+        transform: scale(1.04);
+        box-shadow: 0 12px 30px rgba(198, 91, 120, 0.52);
+      }
+    }
+
+    /* Cards Style */
+    .popup-card {
+      background: var(--soft-white);
+      border-radius: 28px;
+      padding: 42px 32px;
+      width: 100%;
+      border: 2px solid rgba(217, 135, 155, 0.35);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    /* Headings */
+    .cursive-heading {
+      font-family: var(--font-cursive);
+      color: var(--muted-dark-pink);
+      font-size: clamp(34px, 7vw, 48px);
+      line-height: 1.25;
+      text-shadow: 0 2px 10px rgba(217, 135, 155, 0.2);
+      margin-bottom: 8px;
+    }
+
+    .cursive-subheading {
+      font-family: var(--font-cursive);
+      color: var(--soft-brown);
+      font-size: clamp(26px, 5.5vw, 36px);
+      line-height: 1.3;
+      margin-bottom: 14px;
+    }
+
+    /* Scene 4 Birthday Wish Card */
+    .wish-card {
+      background: var(--soft-white);
+      border: 2px solid var(--rose-pink);
+      border-radius: 24px;
+      padding: 30px 26px;
+      margin-top: 18px;
+      width: 100%;
+      box-shadow: var(--shadow-soft);
+      transform: rotate(-0.8deg);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .wish-card:hover {
+      transform: rotate(0deg) translateY(-2px);
+    }
+    .wish-card::before {
+      content: '💌';
+      position: absolute;
+      top: -16px;
+      left: 24px;
+      font-size: 28px;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    }
+    .wish-card-text {
+      font-size: clamp(15px, 3.8vw, 17px);
+      line-height: 1.7;
+      color: #634743;
+      text-align: left;
+    }
+
+    /* Scene 9 Roman Urdu Prayer Card */
+    .prayer-card {
+      background: var(--cream);
+      border: 2px solid var(--rose-pink);
+      border-radius: 24px;
+      padding: 32px 28px;
+      margin-top: 16px;
+      width: 100%;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+    .prayer-card-text {
+      font-size: clamp(16px, 4vw, 19px);
+      line-height: 1.8;
+      color: #553c38;
+      font-style: normal;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* Scene 7 Proposal Buttons */
+    .proposal-buttons {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      margin-top: 24px;
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .btn-accept {
+      background-color: var(--muted-green);
+      color: #FFFFFF;
+      font-family: var(--font-anton);
+      font-size: 20px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 14px 34px;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(139, 175, 145, 0.4);
+      flex: 1;
+      transition: all 0.22s ease;
+      user-select: none;
+    }
+    .btn-accept:hover {
+      background-color: var(--muted-green-hover);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 8px 24px rgba(139, 175, 145, 0.55);
+    }
+    .btn-accept:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .btn-reject {
+      background-color: var(--muted-dark-pink);
+      color: #FFFFFF;
+      font-family: var(--font-anton);
+      font-size: 20px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 14px 34px;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(198, 91, 120, 0.35);
+      flex: 1;
+      transition: all 0.22s ease;
+      user-select: none;
+    }
+    .btn-reject:hover {
+      background-color: var(--muted-dark-pink-hover);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 8px 22px rgba(198, 91, 120, 0.48);
+    }
+    .btn-reject:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* Reject Notice Banner (Floating above panda) */
+    #reject-notice {
+      display: none;
+      font-family: var(--font-cursive);
+      font-size: clamp(26px, 6vw, 34px);
+      color: var(--muted-dark-pink);
+      margin-bottom: 12px;
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 2px 8px rgba(198, 91, 120, 0.2);
+    }
+    #reject-notice.visible {
+      display: block;
+    }
+    #reject-notice.fading {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    /* Accept Happy Banner */
+    #accept-banner {
+      display: none;
+      font-family: var(--font-cursive);
+      font-size: clamp(28px, 6.5vw, 38px);
+      color: var(--muted-dark-pink);
+      margin-bottom: 14px;
+      animation: popIn 0.4s ease;
+      text-shadow: 0 2px 10px rgba(198, 91, 120, 0.25);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Joyful Bounce Animation for Accepted Panda */
+    .panda-joyful-bounce {
+      animation: joyful-bounce 0.8s infinite alternate cubic-bezier(0.25, 1, 0.5, 1) !important;
+    }
+    @keyframes joyful-bounce {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-16px) scale(1.04); }
+    }
+
+    /* Heart Burst Container */
+    .heart-burst-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 15;
+    }
+
+    /* SVG Character Styling */
+    .svg-illustration {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+      filter: drop-shadow(0 10px 22px rgba(198, 91, 120, 0.16));
+    }
+
+    /* Panda subtle breathing & ear animations */
+    .panda-head {
+      transform-origin: 160px 170px;
+      animation: panda-sway 4s infinite ease-in-out;
+    }
+    .panda-ear-left {
+      transform-origin: 85px 85px;
+      animation: ear-wiggle-left 4.5s infinite ease-in-out;
+    }
+    .panda-ear-right {
+      transform-origin: 235px 85px;
+      animation: ear-wiggle-right 4.5s infinite ease-in-out;
+    }
+    .panda-eye-blink {
+      animation: eye-blink 4s infinite;
+      transform-origin: center;
+    }
+
+    @keyframes panda-sway {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      50% { transform: rotate(1.2deg) translateY(-3px); }
+    }
+    @keyframes ear-wiggle-left {
+      0%, 90%, 100% { transform: rotate(0deg); }
+      95% { transform: rotate(-5deg); }
+    }
+    @keyframes ear-wiggle-right {
+      0%, 90%, 100% { transform: rotate(0deg); }
+      95% { transform: rotate(5deg); }
+    }
+    @keyframes eye-blink {
+      0%, 94%, 98%, 100% { transform: scaleY(1); }
+      96% { transform: scaleY(0.1); }
+    }
+
+    /* Floating Heart & Balloon Sway */
+    .floating-heart {
+      animation: heart-float 3s infinite ease-in-out;
+      transform-origin: 160px 120px;
+    }
+    @keyframes heart-float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-10px) scale(1.03); }
+    }
+
+    .balloon-sway {
+      animation: balloon-float 3.5s infinite ease-in-out;
+      transform-origin: 160px 220px;
+    }
+    @keyframes balloon-float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(2.5deg); }
+    }
+
+    /* Candle Flame Flicker */
+    .flame-anim {
+      animation: flame-flicker 0.2s infinite alternate ease-in-out;
+      transform-origin: bottom center;
+    }
+    .flame-anim-2 {
+      animation: flame-flicker 0.25s infinite alternate-reverse ease-in-out;
+      transform-origin: bottom center;
+    }
+    .flame-anim-3 {
+      animation: flame-flicker 0.18s infinite alternate ease-in-out;
+      transform-origin: bottom center;
+    }
+    .flame-anim-4 {
+      animation: flame-flicker 0.22s infinite alternate-reverse ease-in-out;
+      transform-origin: bottom center;
+    }
+
+    @keyframes flame-flicker {
+      0% {
+        transform: scaleY(1) scaleX(1) rotate(-1deg);
+        filter: drop-shadow(0 0 5px #ffd043) drop-shadow(0 0 12px #ff893b);
+      }
+      100% {
+        transform: scaleY(1.14) scaleX(0.92) rotate(1.5deg);
+        filter: drop-shadow(0 0 7px #ffe175) drop-shadow(0 0 16px #ff691e);
+      }
+    }
+
+    /* Final Scene The End Signature */
+    .the-end-badge {
+      font-family: var(--font-anton);
+      color: var(--muted-dark-pink);
+      font-size: clamp(24px, 5.5vw, 32px);
+      letter-spacing: 3px;
+      margin-top: 18px;
+      align-self: flex-end;
+      text-shadow: 0 2px 6px rgba(198, 91, 120, 0.2);
+      padding-right: 8px;
+    }
+
+    /* Fireworks & Confetti Canvas Overlay */
+    #celebration-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Accessibility: Respect Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      #ambient-canvas, #celebration-canvas {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Floating Heart & Sparkle Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Audio Chimes & Music Toggle Button -->
+  <button id="sound-toggle" class="sound-toggle-btn" aria-label="Toggle sweet romantic background melody">
+    <span id="sound-icon">🎵</span>
+    <span id="sound-label">Music</span>
+  </button>
+
+  <!-- Main Container Holding All Scenes -->
+  <main id="app-container">
+
+    <!-- ==========================================
+         SCENE 1: OPENING POPUP
+         ========================================== -->
+    <section id="scene-1" class="scene active" aria-label="Opening Surprise Scene">
+      <div class="popup-card">
+        <h1 class="cursive-heading">A Little Surprise For You 💗</h1>
+        <p style="font-size: 16px; color: var(--soft-brown); margin-top: 10px; font-weight: 500;">
+          Something special crafted just for you...
+        </p>
+        <button id="btn-click-me" class="btn-click-me">CLICK ME</button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SCENE 2: EMOTIONAL PANDA AND HEART
+         ========================================== -->
+    <section id="scene-2" class="scene" aria-label="Emotional Panda Scene">
+      <div style="position: relative; width: 100%; max-width: 380px;">
+        <!-- Cute Emotional Panda Illustration with Emerging Heart -->
+        <svg class="svg-illustration" viewBox="0 0 340 340" width="340" height="340" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FF9AB3" />
+              <stop offset="100%" stop-color="#C65B78" />
+            </linearGradient>
+            <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#C65B78" flood-opacity="0.3"/>
+            </filter>
+            <radialGradient id="pandaFur" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#FFFDFB" />
+              <stop offset="85%" stop-color="#FCEEF0" />
+              <stop offset="100%" stop-color="#F3DCDE" />
+            </radialGradient>
+          </defs>
+
+          <!-- Emerging Pink Heart from behind panda -->
+          <g class="floating-heart" filter="url(#softGlow)">
+            <path d="M 170 35 C 135 -15 65 5 80 65 C 92 105 170 155 170 155 C 170 155 248 105 260 65 C 275 5 205 -15 170 35 Z" fill="url(#heartGrad)"/>
+            <!-- Heart glossy reflection -->
+            <path d="M 105 45 C 100 25 125 15 145 22 C 125 24 110 32 105 45 Z" fill="#FFFFFF" opacity="0.55"/>
+            <!-- Romantic Text Inside Heart -->
+            <text x="170" y="78" font-family="'Dancing Script', cursive, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.5">Accept My Love</text>
+          </g>
+
+          <!-- Panda Group -->
+          <g class="panda-head">
+            <!-- Left Ear -->
+            <g class="panda-ear-left">
+              <ellipse cx="85" cy="140" rx="36" ry="32" fill="#2D282A"/>
+              <ellipse cx="87" cy="142" rx="20" ry="18" fill="#423B3E" opacity="0.6"/>
+            </g>
+            <!-- Right Ear -->
+            <g class="panda-ear-right">
+              <ellipse cx="255" cy="140" rx="36" ry="32" fill="#2D282A"/>
+              <ellipse cx="253" cy="142" rx="20" ry="18" fill="#423B3E" opacity="0.6"/>
+            </g>
+
+            <!-- Panda Chubby Body -->
+            <ellipse cx="170" cy="275" rx="88" ry="60" fill="url(#pandaFur)"/>
+
+            <!-- Panda Head -->
+            <ellipse cx="170" cy="195" rx="96" ry="84" fill="url(#pandaFur)" stroke="#F3DCDE" stroke-width="2"/>
+
+            <!-- Left Eye Patch (Angled for shy/pleading innocence) -->
+            <ellipse cx="122" cy="192" rx="26" ry="24" transform="rotate(-12 122 192)" fill="#2D282A"/>
+            <!-- Right Eye Patch -->
+            <ellipse cx="218" cy="192" rx="26" ry="24" transform="rotate(12 218 192)" fill="#2D282A"/>
+
+            <!-- Big Emotional Glossy Eyes -->
+            <g class="panda-eye-blink">
+              <!-- Left Eye -->
+              <ellipse cx="125" cy="190" rx="14" ry="14" fill="#151213"/>
+              <circle cx="122" cy="186" r="6" fill="#FFFFFF"/>
+              <circle cx="130" cy="194" r="2.8" fill="#FFFFFF"/>
+              <circle cx="120" cy="194" r="1.5" fill="#A5D8FF" opacity="0.8"/> <!-- tear sparkle -->
+
+              <!-- Right Eye -->
+              <ellipse cx="215" cy="190" rx="14" ry="14" fill="#151213"/>
+              <circle cx="212" cy="186" r="6" fill="#FFFFFF"/>
+              <circle cx="220" cy="194" r="2.8" fill="#FFFFFF"/>
+              <circle cx="210" cy="194" r="1.5" fill="#A5D8FF" opacity="0.8"/> <!-- tear sparkle -->
+            </g>
+
+            <!-- Rosy Cheeks -->
+            <ellipse cx="98" cy="220" rx="18" ry="11" fill="#F8A5B5" opacity="0.75"/>
+            <ellipse cx="242" cy="220" rx="18" ry="11" fill="#F8A5B5" opacity="0.75"/>
+
+            <!-- Tiny Nose -->
+            <path d="M 164 205 Q 170 200 176 205 Q 170 212 164 205 Z" fill="#2D282A"/>
+
+            <!-- Sweet Innocent Pleading Mouth -->
+            <path d="M 163 213 Q 170 219 177 213" fill="none" stroke="#2D282A" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Raised Paws -->
+            <!-- Left Paw reaching up -->
+            <ellipse cx="106" cy="225" rx="24" ry="20" transform="rotate(-30 106 225)" fill="#2D282A"/>
+            <!-- Right Paw reaching up -->
+            <ellipse cx="234" cy="225" rx="24" ry="20" transform="rotate(30 234 225)" fill="#2D282A"/>
+          </g>
+        </svg>
+      </div>
+
+      <button id="btn-next-2" class="btn-next">NEXT</button>
+    </section>
+
+    <!-- ==========================================
+         SCENE 3: BIRTHDAY CELEBRATION
+         ========================================== -->
+    <section id="scene-3" class="scene" aria-label="Birthday Celebration Heading">
+      <div style="position: relative; width: 100%; padding: 40px 10px;">
+        <canvas id="celebration-canvas"></canvas>
+        <h1 class="cursive-heading" style="font-size: clamp(38px, 8.5vw, 56px); margin-bottom: 20px;">
+          Happy Birthday Cutie
+        </h1>
+        <div style="font-size: 38px; animation: gentle-pulse 2s infinite ease-in-out;">
+          🎉 🎂 ✨
+        </div>
+      </div>
+      <button id="btn-next-3" class="btn-next">NEXT</button>
+    </section>
+
+    <!-- ==========================================
+         SCENE 4: BIRTHDAY WISH CARD
+         (Keeps "Happy Birthday Cutie" at the top!)
+         ========================================== -->
+    <section id="scene-4" class="scene" aria-label="Birthday Wish Card Scene">
+      <h1 class="cursive-heading" style="font-size: clamp(34px, 7.5vw, 50px); margin-bottom: 6px;">
+        Happy Birthday Cutie
+      </h1>
+      
+      <div class="wish-card">
+        <p class="wish-card-text">
+          Happy Birthday to the sweetest soul! 💗 May Allah always keep you happy, healthy, safe, and surrounded by endless love. May He fill your life with peace, beautiful moments, and countless reasons to smile. May every difficulty become easier for you, and may all your sincere prayers be answered in the most beautiful way. May you achieve your dreams and receive everything that is truly best for you. Keep shining, keep smiling, and always stay as lovely as you are. Ameen. 🎂✨
+        </p>
+      </div>
+
+      <button id="btn-next-4" class="btn-next">NEXT</button>
+    </section>
+
+    <!-- ==========================================
+         SCENE 5: PANDA HOLDING SURPRISE BALLOON
+         ========================================== -->
+    <section id="scene-5" class="scene" aria-label="Panda Holding Surprise Balloon">
+      <div style="position: relative; width: 100%; max-width: 380px;">
+        <svg class="svg-illustration" viewBox="0 0 340 380" width="340" height="380" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="balloonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FF9BB5" />
+              <stop offset="40%" stop-color="#EA7392" />
+              <stop offset="100%" stop-color="#C65B78" />
+            </linearGradient>
+            <filter id="balloonGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#C65B78" flood-opacity="0.35"/>
+            </filter>
+          </defs>
+
+          <!-- Heart-shaped Balloon Swaying -->
+          <g class="balloon-sway">
+            <!-- Balloon String connecting to Panda paw -->
+            <path d="M 205 155 Q 230 190 225 250" fill="none" stroke="#D9879B" stroke-width="2.5" stroke-dasharray="3,1"/>
+
+            <!-- Big Heart Balloon -->
+            <g filter="url(#balloonGlow)">
+              <path d="M 205 60 C 165 -5 85 18 100 88 C 115 136 205 190 205 190 C 205 190 295 136 310 88 C 325 18 245 -5 205 60 Z" fill="url(#balloonGrad)"/>
+              <!-- Balloon Highlights -->
+              <path d="M 130 65 C 120 40 150 25 175 35 C 150 38 135 48 130 65 Z" fill="#FFFFFF" opacity="0.6"/>
+              <!-- Knot -->
+              <polygon points="202,189 208,189 205,195" fill="#C65B78"/>
+              <!-- Text "SURPRISE" inside balloon -->
+              <text x="205" y="112" font-family="'Anton', Impact, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">SURPRISE</text>
+            </g>
+
+            <!-- Small sparkle stars around balloon -->
+            <path d="M 290 35 Q 295 40 300 40 Q 295 40 290 45 Q 290 40 285 40 Q 290 40 290 35 Z" fill="#FFDE59"/>
+            <path d="M 100 135 Q 103 138 106 138 Q 103 138 100 141 Q 100 138 97 138 Q 100 138 100 135 Z" fill="#FFDE59"/>
+          </g>
+
+          <!-- Panda Character (Consistent appearance) -->
+          <g transform="translate(-15, 65)">
+            <!-- Left Ear -->
+            <g class="panda-ear-left">
+              <ellipse cx="85" cy="140" rx="34" ry="30" fill="#2D282A"/>
+              <ellipse cx="87" cy="142" rx="18" ry="16" fill="#423B3E" opacity="0.6"/>
+            </g>
+            <!-- Right Ear -->
+            <g class="panda-ear-right">
+              <ellipse cx="255" cy="140" rx="34" ry="30" fill="#2D282A"/>
+              <ellipse cx="253" cy="142" rx="18" ry="16" fill="#423B3E" opacity="0.6"/>
+            </g>
+
+            <!-- Panda Body -->
+            <ellipse cx="170" cy="275" rx="85" ry="58" fill="url(#pandaFur)"/>
+
+            <!-- Panda Head -->
+            <g class="panda-head">
+              <ellipse cx="170" cy="195" rx="92" ry="80" fill="url(#pandaFur)" stroke="#F3DCDE" stroke-width="2"/>
+
+              <!-- Eye Patches -->
+              <ellipse cx="122" cy="192" rx="25" ry="23" transform="rotate(-10 122 192)" fill="#2D282A"/>
+              <ellipse cx="218" cy="192" rx="25" ry="23" transform="rotate(10 218 192)" fill="#2D282A"/>
+
+              <!-- Eyes (Joyful & Emotional) -->
+              <g class="panda-eye-blink">
+                <ellipse cx="125" cy="190" rx="13" ry="13" fill="#151213"/>
+                <circle cx="122" cy="186" r="5.5" fill="#FFFFFF"/>
+                <circle cx="129" cy="194" r="2.5" fill="#FFFFFF"/>
+
+                <ellipse cx="215" cy="190" rx="13" ry="13" fill="#151213"/>
+                <circle cx="212" cy="186" r="5.5" fill="#FFFFFF"/>
+                <circle cx="219" cy="194" r="2.5" fill="#FFFFFF"/>
+              </g>
+
+              <!-- Cheeks -->
+              <ellipse cx="98" cy="218" rx="17" ry="10" fill="#F8A5B5" opacity="0.75"/>
+              <ellipse cx="242" cy="218" rx="17" ry="10" fill="#F8A5B5" opacity="0.75"/>
+
+              <!-- Nose -->
+              <path d="M 164 205 Q 170 200 176 205 Q 170 211 164 205 Z" fill="#2D282A"/>
+
+              <!-- Smiling Mouth -->
+              <path d="M 160 213 Q 170 223 180 213" fill="none" stroke="#2D282A" stroke-width="3" stroke-linecap="round"/>
+            </g>
+
+            <!-- Left Paw resting on belly -->
+            <ellipse cx="110" cy="265" rx="20" ry="18" fill="#2D282A"/>
+            <!-- Right Paw holding balloon string -->
+            <ellipse cx="235" cy="245" rx="22" ry="20" transform="rotate(-20 235 245)" fill="#2D282A"/>
+          </g>
+        </svg>
+      </div>
+
+      <button id="btn-next-5" class="btn-next">NEXT</button>
+    </section>
+
+    <!-- ==========================================
+         SCENE 6: CHOCOLATE BIRTHDAY CAKE
+         ========================================== -->
+    <section id="scene-6" class="scene" aria-label="Chocolate Birthday Cake Scene">
+      <div style="position: relative; width: 100%; max-width: 440px;">
+        <!-- Detailed Chocolate Cake SVG Illustration -->
+        <svg class="svg-illustration" viewBox="0 0 420 380" width="420" height="380" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Cake Frosting Gradients -->
+            <linearGradient id="darkChoc" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#2c1a17" />
+              <stop offset="50%" stop-color="#442823" />
+              <stop offset="100%" stop-color="#281715" />
+            </linearGradient>
+            <linearGradient id="ganacheDrip" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#3c1d18" />
+              <stop offset="100%" stop-color="#1b0c0a" />
+            </linearGradient>
+            <linearGradient id="chocBarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4a2822" />
+              <stop offset="100%" stop-color="#2a1410" />
+            </linearGradient>
+            <linearGradient id="candleGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#FFF0F2" />
+              <stop offset="50%" stop-color="#FFB3C6" />
+              <stop offset="100%" stop-color="#E07A93" />
+            </linearGradient>
+            <linearGradient id="candleGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#FFFDEB" />
+              <stop offset="50%" stop-color="#FFDE59" />
+              <stop offset="100%" stop-color="#E5A812" />
+            </linearGradient>
+            <filter id="cakeShadow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#80615C" flood-opacity="0.25"/>
+            </filter>
+          </defs>
+
+          <!-- Cake Plate / Base Glow -->
+          <ellipse cx="210" cy="335" rx="180" ry="22" fill="#E8BDC5" opacity="0.35"/>
+          <ellipse cx="210" cy="330" rx="160" ry="16" fill="#FFFDFB" opacity="0.85"/>
+
+          <!-- Cake Base Tier -->
+          <g filter="url(#cakeShadow)">
+            <!-- Bottom Cake Cylinder Body -->
+            <path d="M 70 230 L 70 300 C 70 340 350 340 350 300 L 350 230 Z" fill="url(#darkChoc)"/>
+            <!-- Bottom Cake Top Ellipse -->
+            <ellipse cx="210" cy="230" rx="140" ry="34" fill="#381d19"/>
+
+            <!-- Ganache Drips on Cake Body -->
+            <path d="M 70 230 
+                     C 75 255 85 260 90 240 
+                     C 95 275 110 280 115 235 
+                     C 120 285 135 290 140 235 
+                     C 145 260 155 265 160 235 
+                     C 170 295 190 300 195 235 
+                     C 200 270 215 275 220 235 
+                     C 230 305 250 310 255 235 
+                     C 260 265 275 270 280 235 
+                     C 290 285 305 290 310 235 
+                     C 320 270 335 275 340 240 
+                     L 350 230 Z" fill="url(#ganacheDrip)"/>
+            
+            <!-- Ganache glossy highlights on drips -->
+            <ellipse cx="140" cy="280" rx="4" ry="7" fill="#69372f" opacity="0.6"/>
+            <ellipse cx="195" cy="290" rx="4" ry="8" fill="#69372f" opacity="0.6"/>
+            <ellipse cx="255" cy="298" rx="4.5" ry="9" fill="#69372f" opacity="0.6"/>
+          </g>
+
+          <!-- Luxurious Cake Top Decorations -->
+          <!-- Whipped chocolate rosettes around rim -->
+          <g>
+            <circle cx="85" cy="225" r="14" fill="#301815"/>
+            <circle cx="120" cy="236" r="15" fill="#3a1c18"/>
+            <circle cx="160" cy="242" r="16" fill="#301815"/>
+            <circle cx="210" cy="245" r="17" fill="#3a1c18"/>
+            <circle cx="260" cy="242" r="16" fill="#301815"/>
+            <circle cx="300" cy="236" r="15" fill="#3a1c18"/>
+            <circle cx="335" cy="225" r="14" fill="#301815"/>
+          </g>
+
+          <!-- Chocolate Sandwich Cookies (Oreo style with cream filling) -->
+          <!-- Cookie 1 (Left) -->
+          <g transform="translate(110, 185) rotate(-18)">
+            <ellipse cx="0" cy="0" rx="22" ry="14" fill="#1b0e0c"/>
+            <ellipse cx="0" cy="3" rx="20" ry="12" fill="#FFFDFB"/> <!-- Cream -->
+            <ellipse cx="0" cy="6" rx="22" ry="14" fill="#1b0e0c"/>
+            <!-- Cookie texture embossed -->
+            <ellipse cx="0" cy="6" rx="16" ry="9" fill="none" stroke="#2e1a16" stroke-width="1.5" stroke-dasharray="2,2"/>
+          </g>
+
+          <!-- Cookie 2 (Right) -->
+          <g transform="translate(295, 188) rotate(16)">
+            <ellipse cx="0" cy="0" rx="22" ry="14" fill="#1b0e0c"/>
+            <ellipse cx="0" cy="3" rx="20" ry="12" fill="#FFFDFB"/> <!-- Cream -->
+            <ellipse cx="0" cy="6" rx="22" ry="14" fill="#1b0e0c"/>
+            <ellipse cx="0" cy="6" rx="16" ry="9" fill="none" stroke="#2e1a16" stroke-width="1.5" stroke-dasharray="2,2"/>
+          </g>
+
+          <!-- Chocolate Bar Pieces sticking out -->
+          <!-- Chocolate Bar 1 -->
+          <g transform="translate(155, 145) rotate(-14)">
+            <rect x="0" y="0" width="34" height="52" rx="4" fill="url(#chocBarGrad)" stroke="#1a0a08" stroke-width="1.5"/>
+            <!-- Segments -->
+            <rect x="3" y="3" width="12" height="21" rx="2" fill="#58312a"/>
+            <rect x="19" y="3" width="12" height="21" rx="2" fill="#58312a"/>
+            <rect x="3" y="27" width="12" height="21" rx="2" fill="#58312a"/>
+            <rect x="19" y="27" width="12" height="21" rx="2" fill="#58312a"/>
+          </g>
+
+          <!-- Chocolate Truffles (Cocoa dusted swirl balls) -->
+          <g>
+            <!-- Truffle Left -->
+            <circle cx="140" cy="225" r="16" fill="#2c1410"/>
+            <path d="M 132 220 Q 140 214 148 222 Q 142 228 135 224" fill="none" stroke="#4d241d" stroke-width="2"/>
+            
+            <!-- Truffle Right -->
+            <circle cx="270" cy="226" r="15" fill="#2c1410"/>
+            <path d="M 263 222 Q 270 216 277 223" fill="none" stroke="#4d241d" stroke-width="2"/>
+          </g>
+
+          <!-- Birthday Candles & Continuous Flickering Flames -->
+          <!-- Candle 1 -->
+          <g transform="translate(165, 160)">
+            <rect x="0" y="0" width="8" height="55" rx="3" fill="url(#candleGrad1)"/>
+            <!-- Wick -->
+            <line x1="4" y1="0" x2="4" y2="-8" stroke="#2D282A" stroke-width="1.8"/>
+            <!-- Flame 1 -->
+            <g class="flame-anim" transform="translate(4, -8)">
+              <ellipse cx="0" cy="-14" rx="7" ry="14" fill="#FFA500"/>
+              <ellipse cx="0" cy="-12" rx="4" ry="9" fill="#FFF275"/>
+              <circle cx="0" cy="-8" r="2" fill="#FFFFFF"/>
+            </g>
+          </g>
+
+          <!-- Candle 2 (Center left) -->
+          <g transform="translate(195, 150)">
+            <rect x="0" y="0" width="8" height="65" rx="3" fill="url(#candleGrad2)"/>
+            <!-- Wick -->
+            <line x1="4" y1="0" x2="4" y2="-8" stroke="#2D282A" stroke-width="1.8"/>
+            <!-- Flame 2 -->
+            <g class="flame-anim-2" transform="translate(4, -8)">
+              <ellipse cx="0" cy="-14" rx="7.5" ry="15" fill="#FF7700"/>
+              <ellipse cx="0" cy="-12" rx="4.5" ry="10" fill="#FFEB3B"/>
+              <circle cx="0" cy="-8" r="2" fill="#FFFFFF"/>
+            </g>
+          </g>
+
+          <!-- Candle 3 (Center right) -->
+          <g transform="translate(225, 150)">
+            <rect x="0" y="0" width="8" height="65" rx="3" fill="url(#candleGrad1)"/>
+            <!-- Wick -->
+            <line x1="4" y1="0" x2="4" y2="-8" stroke="#2D282A" stroke-width="1.8"/>
+            <!-- Flame 3 -->
+            <g class="flame-anim-3" transform="translate(4, -8)">
+              <ellipse cx="0" cy="-14" rx="7" ry="14" fill="#FFA500"/>
+              <ellipse cx="0" cy="-12" rx="4" ry="9" fill="#FFF275"/>
+              <circle cx="0" cy="-8" r="2" fill="#FFFFFF"/>
+            </g>
+          </g>
+
+          <!-- Candle 4 -->
+          <g transform="translate(255, 160)">
+            <rect x="0" y="0" width="8" height="55" rx="3" fill="url(#candleGrad2)"/>
+            <!-- Wick -->
+            <line x1="4" y1="0" x2="4" y2="-8" stroke="#2D282A" stroke-width="1.8"/>
+            <!-- Flame 4 -->
+            <g class="flame-anim-4" transform="translate(4, -8)">
+              <ellipse cx="0" cy="-14" rx="7.5" ry="14" fill="#FF7700"/>
+              <ellipse cx="0" cy="-12" rx="4" ry="9" fill="#FFEB3B"/>
+              <circle cx="0" cy="-8" r="2" fill="#FFFFFF"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <button id="btn-next-6" class="btn-next">NEXT</button>
+    </section>
+
+    <!-- ==========================================
+         SCENE 7: ACCEPT MY LOVE PROPOSAL
+         ========================================== -->
+    <section id="scene-7" class="scene" aria-label="Accept My Love Proposal Scene">
+      <!-- Temporary Rejection Message (Controlled strictly by JS) -->
+      <div id="reject-notice">No, Accept My Love! 🥺💗</div>
+
+      <!-- Happy Panda Banner after Acceptance -->
+      <div id="accept-banner">You Just Made My Heart Smile! 💗</div>
+
+      <!-- Relative container for Panda & Hearts -->
+      <div id="proposal-panda-box" style="position: relative; width: 100%; max-width: 360px;">
+        <div id="heart-burst-container" class="heart-burst-container"></div>
+
+        <svg id="proposal-panda-svg" class="svg-illustration" viewBox="0 0 340 340" width="340" height="340" xmlns="http://www.w3.org/2000/svg">
+          <!-- Panda Group -->
+          <g id="proposal-panda-group" class="panda-head">
+            <!-- Left Ear -->
+            <g class="panda-ear-left">
+              <ellipse cx="85" cy="140" rx="35" ry="31" fill="#2D282A"/>
+              <ellipse cx="87" cy="142" rx="19" ry="17" fill="#423B3E" opacity="0.6"/>
+            </g>
+            <!-- Right Ear -->
+            <g class="panda-ear-right">
+              <ellipse cx="255" cy="140" rx="35" ry="31" fill="#2D282A"/>
+              <ellipse cx="253" cy="142" rx="19" ry="17" fill="#423B3E" opacity="0.6"/>
+            </g>
+
+            <!-- Panda Body -->
+            <ellipse cx="170" cy="275" rx="86" ry="58" fill="url(#pandaFur)"/>
+
+            <!-- Panda Head -->
+            <ellipse cx="170" cy="195" rx="94" ry="82" fill="url(#pandaFur)" stroke="#F3DCDE" stroke-width="2"/>
+
+            <!-- Left Eye Patch -->
+            <ellipse cx="122" cy="190" rx="25" ry="23" transform="rotate(-12 122 190)" fill="#2D282A"/>
+            <!-- Right Eye Patch -->
+            <ellipse cx="218" cy="190" rx="25" ry="23" transform="rotate(12 218 190)" fill="#2D282A"/>
+
+            <!-- Normal Pleading Eyes (Will be swapped to happy crescents on ACCEPT) -->
+            <g id="panda-pleading-eyes" class="panda-eye-blink">
+              <ellipse cx="125" cy="188" rx="13" ry="13" fill="#151213"/>
+              <circle cx="122" cy="184" r="5.5" fill="#FFFFFF"/>
+              <circle cx="129" cy="192" r="2.5" fill="#FFFFFF"/>
+
+              <ellipse cx="215" cy="188" rx="13" ry="13" fill="#151213"/>
+              <circle cx="212" cy="184" r="5.5" fill="#FFFFFF"/>
+              <circle cx="219" cy="192" r="2.5" fill="#FFFFFF"/>
+            </g>
+
+            <!-- Happy Smiling Eyes (Hidden initially) -->
+            <g id="panda-happy-eyes" style="display: none;">
+              <path d="M 112 190 Q 125 174 138 190" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M 202 190 Q 215 174 228 190" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+            </g>
+
+            <!-- Rosy Cheeks -->
+            <ellipse id="panda-cheek-l" cx="96" cy="216" rx="18" ry="11" fill="#F8A5B5" opacity="0.8"/>
+            <ellipse id="panda-cheek-r" cx="244" cy="216" rx="18" ry="11" fill="#F8A5B5" opacity="0.8"/>
+
+            <!-- Nose -->
+            <path d="M 164 203 Q 170 198 176 203 Q 170 209 164 203 Z" fill="#2D282A"/>
+
+            <!-- Pleading mouth (Normal) -->
+            <path id="panda-pleading-mouth" d="M 163 211 Q 170 217 177 211" fill="none" stroke="#2D282A" stroke-width="3" stroke-linecap="round"/>
+            <!-- Happy Open Smile (Hidden initially) -->
+            <path id="panda-happy-mouth" d="M 158 210 Q 170 228 182 210 Z" fill="#C65B78" stroke="#2D282A" stroke-width="2" style="display: none;"/>
+
+            <!-- Decorative Cream Paper Held by Panda -->
+            <g id="panda-paper" transform="translate(65, 218)">
+              <!-- Card Drop Shadow & Card Body -->
+              <rect x="0" y="0" width="210" height="96" rx="16" fill="#FFF8F2" stroke="#D9879B" stroke-width="2.5" filter="drop-shadow(0 4px 10px rgba(198, 91, 120, 0.2))"/>
+              <!-- Inner border line -->
+              <rect x="6" y="6" width="198" height="84" rx="12" fill="none" stroke="#FCEEF0" stroke-width="1.5" stroke-dasharray="4,2"/>
+              <!-- Small Heart Accents in Card Corners -->
+              <path d="M 18 18 C 15 14 10 16 12 21 C 14 24 18 28 18 28 C 18 28 22 24 24 21 C 26 16 21 14 18 18 Z" fill="#D9879B"/>
+              <path d="M 192 18 C 189 14 184 16 186 21 C 188 24 192 28 192 28 C 192 28 196 24 198 21 C 200 16 195 14 192 18 Z" fill="#D9879B"/>
+              <!-- Text "Accept My Love" on the paper -->
+              <text x="105" y="55" font-family="'Dancing Script', cursive, sans-serif" font-size="28" font-weight="700" fill="#C65B78" text-anchor="middle">Accept My Love</text>
+            </g>
+
+            <!-- Panda Paws Overlapping the Paper -->
+            <!-- Left Paw -->
+            <ellipse cx="88" cy="228" rx="20" ry="17" fill="#2D282A"/>
+            <!-- Right Paw -->
+            <ellipse cx="252" cy="228" rx="20" ry="17" fill="#2D282A"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Accept & Reject Buttons Side by Side -->
+      <div id="proposal-actions" class="proposal-buttons">
+        <button id="btn-accept" class="btn-accept">ACCEPT</button>
+        <button id="btn-reject" class="btn-reject">REJECT</button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SCENE 8: SPECIAL MESSAGE
+         ========================================== -->
+    <section id="scene-8" class="scene" aria-label="Special Message Intro Scene">
+      <div class="popup-card" style="padding: 48px 30px;">
+        <h1 class="cursive-heading" style="font-size: clamp(38px, 8.5vw, 54px); margin-bottom: 12px;">
+          Special Message 💗
+        </h1>
+        <p style="font-size: 17px; color: var(--soft-brown); margin-top: 8px; font-weight: 500;">
+          From the deepest corner of my heart...
+        </p>
+        <button id="btn-next-8" class="btn-next">NEXT</button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SCENE 9: READ COMPLETELY
+         ========================================== -->
+    <section id="scene-9" class="scene" aria-label="Read Completely Prayer Scene">
+      <h1 class="cursive-heading" style="font-size: clamp(34px, 7.5vw, 48px); margin-bottom: 8px;">
+        Read Completely 💌
+      </h1>
+
+      <div class="prayer-card">
+        <p class="prayer-card-text">
+          Allah ap ko hamesha khush rakha, hamesha hansta muskrata rakha, Ap ko itni himat hosla or sabar da k ap bari sa bari mushkil sa lar saka, Ap ko wo sab mila jo ap k lia bahtar ha, Ap jis ko chai wo ap ko mil jae, Ap bhot piari hain ik hansti muskarati phool ki tara hain, Allah ap ko ise tara hansta muskrata rakha, Ameen.
+        </p>
+      </div>
+
+      <button id="btn-next-9" class="btn-next">NEXT</button>
+    </section>
+
+    <!-- ==========================================
+         SCENE 10: FINAL BIRTHDAY ENDING
+         ========================================== -->
+    <section id="scene-10" class="scene" aria-label="Final Panda Couple Ending Scene">
+      <h2 class="cursive-subheading" style="margin-bottom: 2px;">And Again...</h2>
+      <h1 class="cursive-heading" style="font-size: clamp(32px, 7vw, 46px); margin-bottom: 14px;">
+        Happy Birthday Meri Jan 💗
+      </h1>
+
+      <!-- Panda Couple Illustration -->
+      <div style="position: relative; width: 100%; max-width: 440px;">
+        <svg class="svg-illustration" viewBox="0 0 420 340" width="420" height="340" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="brownFur" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#9C7670" />
+              <stop offset="100%" stop-color="#73524D" />
+            </linearGradient>
+            <linearGradient id="brownCreamFace" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#FFF5EF" />
+              <stop offset="100%" stop-color="#F2DFD5" />
+            </linearGradient>
+          </defs>
+
+          <!-- Balloon held by White Panda -->
+          <g class="balloon-sway">
+            <path d="M 85 130 Q 95 180 145 220" fill="none" stroke="#D9879B" stroke-width="2" stroke-dasharray="3,1"/>
+            <path d="M 85 65 C 60 20 10 35 20 85 C 32 120 85 155 85 155 C 85 155 138 120 150 85 C 160 35 110 20 85 65 Z" fill="url(#balloonGrad)" filter="url(#softGlow)"/>
+            <polygon points="82,154 88,154 85,160" fill="#C65B78"/>
+            <path d="M 40 70 C 35 50 55 40 70 48" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+          </g>
+
+          <!-- Floating mini hearts around pandas -->
+          <g class="floating-heart">
+            <path d="M 230 75 C 220 55 195 62 200 80 C 205 95 230 110 230 110 C 230 110 255 95 260 80 C 265 62 240 55 230 75 Z" fill="#FF8BA7" opacity="0.75"/>
+          </g>
+
+          <!-- White Panda (Left) -->
+          <g transform="translate(45, 30)">
+            <!-- Left Ear -->
+            <ellipse cx="90" cy="125" rx="26" ry="24" fill="#2D282A"/>
+            <!-- Right Ear -->
+            <ellipse cx="205" cy="120" rx="26" ry="24" fill="#2D282A"/>
+
+            <!-- White Panda Body -->
+            <ellipse cx="150" cy="235" rx="72" ry="50" fill="url(#pandaFur)"/>
+
+            <!-- White Panda Head -->
+            <ellipse cx="150" cy="165" rx="74" ry="65" fill="url(#pandaFur)" stroke="#F3DCDE" stroke-width="1.5"/>
+
+            <!-- Eye Patches -->
+            <ellipse cx="118" cy="162" rx="20" ry="18" transform="rotate(-10 118 162)" fill="#2D282A"/>
+            <ellipse cx="182" cy="160" rx="20" ry="18" transform="rotate(10 182 160)" fill="#2D282A"/>
+
+            <!-- Happy Smiling Eye Arcs -->
+            <path d="M 110 162 Q 118 152 126 162" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M 174 160 Q 182 150 190 160" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+
+            <!-- Rosy Cheeks -->
+            <ellipse cx="102" cy="180" rx="14" ry="8" fill="#F8A5B5" opacity="0.8"/>
+            <ellipse cx="198" cy="178" rx="14" ry="8" fill="#F8A5B5" opacity="0.8"/>
+
+            <!-- Nose & Sweet Smile -->
+            <ellipse cx="150" cy="172" rx="6" ry="4" fill="#2D282A"/>
+            <path d="M 144 179 Q 150 186 156 179" fill="none" stroke="#2D282A" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Paw holding balloon string -->
+            <ellipse cx="105" cy="205" rx="16" ry="14" fill="#2D282A"/>
+          </g>
+
+          <!-- Brown Panda (Right, resting head affectionately on White Panda's shoulder) -->
+          <g transform="translate(170, 50) rotate(-14 140 160)">
+            <!-- Left Ear -->
+            <ellipse cx="80" cy="115" rx="25" ry="23" fill="#61443F"/>
+            <!-- Right Ear -->
+            <ellipse cx="190" cy="118" rx="25" ry="23" fill="#61443F"/>
+
+            <!-- Brown Panda Body -->
+            <ellipse cx="135" cy="225" rx="68" ry="48" fill="#7D5B54"/>
+
+            <!-- Brown Panda Head with Cream Face -->
+            <ellipse cx="135" cy="155" rx="68" ry="60" fill="#7D5B54"/>
+            <ellipse cx="135" cy="160" rx="55" ry="48" fill="url(#brownCreamFace)"/>
+
+            <!-- Soft Eye Patches -->
+            <ellipse cx="108" cy="155" rx="18" ry="16" transform="rotate(-8 108 155)" fill="#61443F"/>
+            <ellipse cx="162" cy="155" rx="18" ry="16" transform="rotate(8 162 155)" fill="#61443F"/>
+
+            <!-- Peaceful, Happy Closed Eyes (Resting happily) -->
+            <path d="M 101 156 Q 108 146 115 156" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            <path d="M 155 156 Q 162 146 169 156" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- Rosy Cheeks -->
+            <ellipse cx="92" cy="172" rx="13" ry="7" fill="#E88F9E" opacity="0.8"/>
+            <ellipse cx="178" cy="172" rx="13" ry="7" fill="#E88F9E" opacity="0.8"/>
+
+            <!-- Nose & Gentle Contented Smile -->
+            <ellipse cx="135" cy="168" rx="5" ry="3.5" fill="#442C27"/>
+            <path d="M 130 174 Q 135 180 140 174" fill="none" stroke="#442C27" stroke-width="2.5" stroke-linecap="round"/>
+
+            <!-- Brown Panda Arm hugging or leaning closely -->
+            <ellipse cx="78" cy="195" rx="18" ry="15" fill="#61443F"/>
+          </g>
+        </svg>
+
+        <!-- THE END in stylish muted dark pink font in lower right -->
+        <div class="the-end-badge">THE END</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* =========================================================================
+       CENTRAL NAVIGATION & STATE LOGIC
+       ========================================================================= */
+
+    // Current Scene Index (1 to 10)
+    let currentScene = 1;
+
+    // Timers for clear cleanup on scene change
+    let rejectTimer = null;
+    let acceptTransitionTimer = null;
+    let isAccepting = false;
+
+    // Switch Scene function: guaranteed single-scene display
+    function goToScene(targetScene) {
+      if (targetScene < 1 || targetScene > 10) return;
+
+      // Clear any pending temporary timers when changing scenes
+      if (rejectTimer) {
+        clearTimeout(rejectTimer);
+        rejectTimer = null;
+      }
+      if (acceptTransitionTimer) {
+        clearTimeout(acceptTransitionTimer);
+        acceptTransitionTimer = null;
+      }
+
+      // Hide all scenes
+      const allScenes = document.querySelectorAll('.scene');
+      allScenes.forEach(scene => {
+        scene.classList.remove('active');
+      });
+
+      // Show target scene
+      const nextSceneEl = document.getElementById('scene-' + targetScene);
+      if (nextSceneEl) {
+        nextSceneEl.classList.add('active');
+        currentScene = targetScene;
+
+        // If Scene 3, trigger celebratory confetti
+        if (targetScene === 3) {
+          triggerCelebrationConfetti();
+        }
+
+        // Play gentle transition chime if audio active
+        playSoftTone(523.25, 0.15); // C5
+      }
+
+      // Scroll to top of window smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* =========================================================================
+       EVENT HANDLERS FOR NAVIGATION
+       ========================================================================= */
+
+    // Scene 1: CLICK ME -> Scene 2
+    document.getElementById('btn-click-me').addEventListener('click', function() {
+      initAudioContext();
+      playMelodyNote(440); // A4
+      goToScene(2);
+    });
+
+    // Scene 2: NEXT -> Scene 3
+    document.getElementById('btn-next-2').addEventListener('click', function() {
+      goToScene(3);
+    });
+
+    // Scene 3: NEXT -> Scene 4 (Shows birthday wish card below heading)
+    document.getElementById('btn-next-3').addEventListener('click', function() {
+      goToScene(4);
+    });
+
+    // Scene 4: NEXT -> Scene 5 (Removes heading + wish card together)
+    document.getElementById('btn-next-4').addEventListener('click', function() {
+      goToScene(5);
+    });
+
+    // Scene 5: NEXT -> Scene 6 (Chocolate Cake)
+    document.getElementById('btn-next-5').addEventListener('click', function() {
+      goToScene(6);
+    });
+
+    // Scene 6: NEXT -> Scene 7 (Proposal Scene)
+    document.getElementById('btn-next-6').addEventListener('click', function() {
+      goToScene(7);
+    });
+
+    // Scene 7: Proposal ACCEPT & REJECT Logic
+    const rejectNoticeEl = document.getElementById('reject-notice');
+    const acceptBannerEl = document.getElementById('accept-banner');
+    const btnAcceptEl = document.getElementById('btn-accept');
+    const btnRejectEl = document.getElementById('btn-reject');
+    const proposalPandaGroup = document.getElementById('proposal-panda-group');
+    const proposalActions = document.getElementById('proposal-actions');
+
+    // REJECT FUNCTIONALITY:
+    // When REJECT is clicked, show "No, Accept My Love! 🥺💗" above the panda.
+    // Keep message visible for approx 10s, then fade out ONLY the message.
+    // Panda, paper, ACCEPT, and REJECT remain visible and functional. Repeated clicks restart timer.
+    btnRejectEl.addEventListener('click', function() {
+      if (isAccepting) return;
+
+      playSadPluck();
+
+      // Reset any active timer
+      if (rejectTimer) {
+        clearTimeout(rejectTimer);
+      }
+
+      rejectNoticeEl.classList.remove('fading');
+      rejectNoticeEl.classList.add('visible');
+
+      // 10 second display duration then fade out ONLY the message
+      rejectTimer = setTimeout(function() {
+        rejectNoticeEl.classList.add('fading');
+        setTimeout(function() {
+          rejectNoticeEl.classList.remove('visible', 'fading');
+        }, 800);
+      }, 10000);
+    });
+
+    // ACCEPT FUNCTIONALITY:
+    // When ACCEPT is clicked:
+    // - Make panda happy (joyful eyes, smile, rosy blush, bounce)
+    // - Hearts float upward
+    // - Show "You Just Made My Heart Smile! 💗"
+    // - Keep visible for approx 5 seconds
+    // - Automatically advance to Scene 8
+    btnAcceptEl.addEventListener('click', function() {
+      if (isAccepting) return;
+      isAccepting = true;
+
+      // Disable buttons to prevent repeated clicks
+      btnAcceptEl.style.opacity = '0.7';
+      btnRejectEl.style.opacity = '0.7';
+      btnAcceptEl.style.pointerEvents = 'none';
+      btnRejectEl.style.pointerEvents = 'none';
+
+      // Clear reject notice if present
+      if (rejectTimer) {
+        clearTimeout(rejectTimer);
+        rejectTimer = null;
+      }
+      rejectNoticeEl.style.display = 'none';
+
+      // Swap to happy eyes & smile
+      document.getElementById('panda-pleading-eyes').style.display = 'none';
+      document.getElementById('panda-pleading-mouth').style.display = 'none';
+      document.getElementById('panda-happy-eyes').style.display = 'block';
+      document.getElementById('panda-happy-mouth').style.display = 'block';
+
+      // Add joyful bounce
+      proposalPandaGroup.classList.add('panda-joyful-bounce');
+
+      // Show banner
+      acceptBannerEl.style.display = 'block';
+
+      // Play joyful celebration chime
+      playJoyfulFanfare();
+
+      // Spawn upward floating hearts
+      startHeartBurst();
+
+      // 5-second happy animation then advance to Scene 8
+      acceptTransitionTimer = setTimeout(function() {
+        goToScene(8);
+      }, 5000);
+    });
+
+    // Scene 8: NEXT -> Scene 9 (Read Completely)
+    document.getElementById('btn-next-8').addEventListener('click', function() {
+      goToScene(9);
+    });
+
+    // Scene 9: NEXT -> Scene 10 (Final Ending)
+    document.getElementById('btn-next-9').addEventListener('click', function() {
+      goToScene(10);
+      triggerCelebrationConfetti();
+      playJoyfulFanfare();
+    });
+
+
+    /* =========================================================================
+       HEART BURST ANIMATION FOR SCENE 7 ACCEPT
+       ========================================================================= */
+    function startHeartBurst() {
+      const container = document.getElementById('heart-burst-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const heartSymbols = ['💗', '💖', '💕', '💓', '❤️'];
+      const totalHearts = 24;
+
+      for (let i = 0; i < totalHearts; i++) {
+        const heart = document.createElement('div');
+        const symbol = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+        heart.innerText = symbol;
+        heart.style.position = 'absolute';
+        heart.style.left = (20 + Math.random() * 60) + '%';
+        heart.style.bottom = '40px';
+        heart.style.fontSize = (18 + Math.random() * 20) + 'px';
+        heart.style.pointerEvents = 'none';
+        heart.style.opacity = '1';
+        heart.style.transition = 'all ' + (2 + Math.random() * 2) + 's cubic-bezier(0.1, 0.8, 0.3, 1)';
+
+        container.appendChild(heart);
+
+        // Animate upwards with staggered delay
+        setTimeout(() => {
+          const moveX = (Math.random() - 0.5) * 160;
+          const moveY = -(180 + Math.random() * 160);
+          heart.style.transform = `translate(${moveX}px, ${moveY}px) scale(${1 + Math.random() * 0.5})`;
+          heart.style.opacity = '0';
+        }, i * 140);
+      }
+    }
+
+
+    /* =========================================================================
+       AMBIENT FLOATING HEARTS & PARTICLES (Canvas)
+       ========================================================================= */
+    const ambientCanvas = document.getElementById('ambient-canvas');
+    const ctx = ambientCanvas.getContext('2d');
+    let width = (ambientCanvas.width = window.innerWidth);
+    let height = (ambientCanvas.height = window.innerHeight);
+
+    window.addEventListener('resize', function() {
+      width = ambientCanvas.width = window.innerWidth;
+      height = ambientCanvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const totalParticles = Math.min(28, Math.floor(window.innerWidth / 30));
+
+    class Particle {
+      constructor() {
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * width;
+        this.y = initial ? Math.random() * height : height + 20;
+        this.size = Math.random() * 12 + 8;
+        this.speedY = Math.random() * 0.7 + 0.4;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.45 + 0.15;
+        this.isHeart = Math.random() > 0.4;
+        this.rot = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.02;
+      }
+
+      update() {
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        this.rot += this.rotSpeed;
+        if (this.y < -30) {
+          this.reset(false);
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rot);
+        ctx.globalAlpha = this.opacity;
+
+        if (this.isHeart) {
+          ctx.fillStyle = '#C65B78';
+          const s = this.size * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(0, -s * 0.3);
+          ctx.bezierCurveTo(-s, -s * 1.2, -s * 1.8, s * 0.2, 0, s * 1.4);
+          ctx.bezierCurveTo(s * 1.8, s * 0.2, s, -s * 1.2, 0, -s * 0.3);
+          ctx.fill();
+        } else {
+          // Sparkle circle
+          ctx.fillStyle = '#FFFDFB';
+          ctx.beginPath();
+          ctx.arc(0, 0, this.size * 0.35, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < totalParticles; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateAmbient() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+      }
+      requestAnimationFrame(animateAmbient);
+    }
+    animateAmbient();
+
+
+    /* =========================================================================
+       CELEBRATION CONFETTI & FIREWORKS (SCENE 3 & 10)
+       ========================================================================= */
+    const celebCanvas = document.getElementById('celebration-canvas');
+    let celebCtx = celebCanvas.getContext('2d');
+    let celebPieces = [];
+    let celebAnimId = null;
+
+    function triggerCelebrationConfetti() {
+      celebCanvas.width = celebCanvas.offsetWidth || 500;
+      celebCanvas.height = celebCanvas.offsetHeight || 300;
+      const cWidth = celebCanvas.width;
+      const cHeight = celebCanvas.height;
+
+      celebPieces = [];
+      const colors = ['#C65B78', '#D9879B', '#F8A5B5', '#FFD166', '#8BAF91', '#FFFFFF'];
+
+      for (let i = 0; i < 70; i++) {
+        celebPieces.push({
+          x: cWidth / 2 + (Math.random() - 0.5) * 50,
+          y: cHeight / 2 + (Math.random() - 0.5) * 50,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 1.2) * 10 - 2,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 10,
+          opacity: 1
+        });
+      }
+
+      if (celebAnimId) cancelAnimationFrame(celebAnimId);
+
+      function renderCeleb() {
+        celebCtx.clearRect(0, 0, cWidth, cHeight);
+        let active = false;
+
+        for (let p of celebPieces) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.25; // gravity
+          p.vx *= 0.98; // drag
+          p.rotation += p.rotSpeed;
+          p.opacity -= 0.007;
+
+          if (p.opacity > 0) {
+            active = true;
+            celebCtx.save();
+            celebCtx.translate(p.x, p.y);
+            celebCtx.rotate((p.rotation * Math.PI) / 180);
+            celebCtx.globalAlpha = Math.max(0, p.opacity);
+            celebCtx.fillStyle = p.color;
+            celebCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            celebCtx.restore();
+          }
+        }
+
+        if (active) {
+          celebAnimId = requestAnimationFrame(renderCeleb);
+        } else {
+          celebCtx.clearRect(0, 0, cWidth, cHeight);
+        }
+      }
+
+      renderCeleb();
+    }
+
+
+    /* =========================================================================
+       SELF-CONTAINED AUDIO SYNTHESIZER (Web Audio API - Zero External Files)
+       ========================================================================= */
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let musicInterval = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Gentle Kalimba/Music-box Tone Synthesis
+    function playMelodyNote(freq, duration = 0.5, type = 'sine') {
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        // Soft bell-like envelope
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Audio policy fallback
+      }
+    }
+
+    function playSoftTone(freq, duration = 0.2) {
+      playMelodyNote(freq, duration, 'sine');
+    }
+
+    function playSadPluck() {
+      if (!audioCtx) return;
+      playMelodyNote(329.63, 0.4, 'triangle'); // E4
+      setTimeout(() => playMelodyNote(311.13, 0.5, 'triangle'), 150); // Eb4
+    }
+
+    function playJoyfulFanfare() {
+      if (!audioCtx) return;
+      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+      notes.forEach((note, i) => {
+        setTimeout(() => playMelodyNote(note, 0.4, 'sine'), i * 120);
+      });
+    }
+
+    // Soft Romantic Lullaby Loop
+    const romanticMelody = [
+      { f: 523.25, d: 0.6 }, // C5
+      { f: 659.25, d: 0.6 }, // E5
+      { f: 783.99, d: 0.8 }, // G5
+      { f: 659.25, d: 0.5 }, // E5
+      { f: 880.00, d: 0.8 }, // A5
+      { f: 783.99, d: 0.9 }, // G5
+      { f: 659.25, d: 0.5 }, // E5
+      { f: 587.33, d: 0.7 }, // D5
+      { f: 523.25, d: 1.0 }, // C5
+    ];
+    let noteIndex = 0;
+
+    function toggleMusic() {
+      initAudioContext();
+      const btn = document.getElementById('sound-toggle');
+      const label = document.getElementById('sound-label');
+
+      if (isMusicPlaying) {
+        isMusicPlaying = false;
+        btn.classList.remove('playing');
+        label.innerText = 'Music';
+        if (musicInterval) {
+          clearInterval(musicInterval);
+          musicInterval = null;
+        }
+      } else {
+        isMusicPlaying = true;
+        btn.classList.add('playing');
+        label.innerText = 'Playing 💖';
+
+        function step() {
+          if (!isMusicPlaying) return;
+          const current = romanticMelody[noteIndex];
+          playMelodyNote(current.f, current.d, 'sine');
+          noteIndex = (noteIndex + 1) % romanticMelody.length;
+        }
+
+        step();
+        musicInterval = setInterval(step, 650);
+      }
+    }
+
+    document.getElementById('sound-toggle').addEventListener('click', toggleMusic);
+
+  </script>
+</body>
+</html>
